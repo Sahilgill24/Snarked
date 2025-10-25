@@ -1,7 +1,5 @@
 ## Snarked
 
-
-
 Trying to write snarks on my own to learn about them 
 
 Simplified implementations of three major zero-knowledge proof systems:
