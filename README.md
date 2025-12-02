@@ -1,12 +1,12 @@
-# Scripts for youtube videos
+## Snarked
 
 
-## Topics 
 
-1.) Linear codes
-2.) STARKS 
-3.) FRI and proximity gaps 
-4.) IOPP and IP's 
-5.) Federated Learning papers 
-6.) Paper reviews and then ZKIcicle
+Trying to write snarks on my own to learn about them 
+
+Simplified implementations of three major zero-knowledge proof systems:
+
+- **Groth16**: Pairing-based zk-SNARK 
+- **PLONK**: zk-SNARK with polynomial commitments
+- **GKR**: IP using the sumcheck protocol
 
