@@ -1,4 +1,3 @@
-use serde_json::json;
 use trace::{ConstraintPolynomials, ExecutionTrace, TraceProof};
 use vm::Cpu;
 
@@ -188,9 +187,3 @@ fn main() {
     println!("\n=== Example 1 Trace (JSON) ===");
     println!("{}", prover1.export_trace_json());
 }
-
-// STARK proof generation implementation Feb 2026
-
-// STARK proof verification March 2026
-
-// STARK prover binary integration March 2026

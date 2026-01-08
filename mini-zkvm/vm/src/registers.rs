@@ -1,15 +1,8 @@
-#[derive(Debug)]
-pub enum Registers {
-    r0,
-    r1,
-    r2,
-    r3,
-    r4,
-    r5,
-    r6,
-    r7,
-}
-#[derive(Debug, Default)]
+use serde::{Deserialize, Serialize};
+
+pub const NUM_REGISTERS: usize = 8;
+
+#[derive(Debug, Default, Clone)]
 pub struct Register {
     r0: u16,
     r1: u16,
@@ -23,19 +16,10 @@ pub struct Register {
 
 impl Register {
     pub fn new() -> Register {
-        Register {
-            r0: 0,
-            r1: 0,
-            r2: 0,
-            r3: 0,
-            r4: 0,
-            r5: 0,
-            r6: 0,
-            r7: 0,
-        }
+        Register::default()
     }
 
-    pub fn get_reg_from_idx(&mut self, idx: u16) -> Option<u16> {
+    pub fn get_reg_from_idx(&self, idx: u16) -> Option<u16> {
         match idx {
             0 => Some(self.r0),
             1 => Some(self.r1),
@@ -59,14 +43,16 @@ impl Register {
             5 => self.r5 = val,
             6 => self.r6 = val,
             7 => self.r7 = val,
-            _ => {} // ignore invalid register indices
+            _ => {}
         }
     }
-    
-    pub fn get_all_registers(&self) -> [u16; 8] {
-        [self.r0, self.r1, self.r2, self.r3, self.r4, self.r5, self.r6, self.r7]
+
+    pub fn get_all_registers(&self) -> [u16; NUM_REGISTERS] {
+        [
+            self.r0, self.r1, self.r2, self.r3, self.r4, self.r5, self.r6, self.r7,
+        ]
     }
-    
+
     pub fn to_trace_row(&self, pc: u32, instruction: u16) -> TraceRow {
         TraceRow {
             pc,
@@ -76,55 +62,24 @@ impl Register {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TraceRow {
     pub pc: u32,
     pub instruction: u16,
-    pub registers: [u16; 8],
+    pub registers: [u16; NUM_REGISTERS],
 }
+
+/// Destination register, encoded in bits 11..8.
+pub fn decode_rd(instruction: u16) -> u16 {
+    (instruction >> 8) & 0xF
 }
 
-// 0x01E0 for bit 5-8
-// 0x1E00 for bit 9-12
-// pub fn get_last_register(instruction: u16) -> Option<Registers> {
-//     // these are the last 4 bits
-//     match instruction & 0xF {
-//         0 => Some(Registers::r0),
-//         1 => Some(Registers::r1),
-//         2 => Some(Registers::r2),
-//         3 => Some(Registers::r3),
-//         4 => Some(Registers::r4),
-//         5 => Some(Registers::r5),
-//         6 => Some(Registers::r6),
-//         7 => Some(Registers::r7),
-//         _ => None,
-//     }
-// }
+/// First source register, encoded in bits 7..4.
+pub fn decode_rs(instruction: u16) -> u16 {
+    (instruction >> 4) & 0xF
+}
 
-// pub fn get_first_register(instruction: u16) -> Option<Registers> {
-//     match instruction & 0x01E0 {
-//         0 => Some(Registers::r0),
-//         1 => Some(Registers::r1),
-//         2 => Some(Registers::r2),
-//         3 => Some(Registers::r3),
-//         4 => Some(Registers::r4),
-//         5 => Some(Registers::r5),
-//         6 => Some(Registers::r6),
-//         7 => Some(Registers::r7),
-//         _ => None,
-//     }
-// }
-
-// pub fn get_dr_register(instruction: u16) -> Option<Registers> {
-//     match instruction & 0x1E00 {
-//         0 => Some(Registers::r0),
-//         1 => Some(Registers::r1),
-//         2 => Some(Registers::r2),
-//         3 => Some(Registers::r3),
-//         4 => Some(Registers::r4),
-//         5 => Some(Registers::r5),
-//         6 => Some(Registers::r6),
-//         7 => Some(Registers::r7),
-//         _ => None,
-//     }
-// }
+/// Second source register, encoded in bits 3..0.
+pub fn decode_rt(instruction: u16) -> u16 {
+    instruction & 0xF
+}

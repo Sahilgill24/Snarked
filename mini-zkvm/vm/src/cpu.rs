@@ -9,10 +9,15 @@ pub struct Cpu {
     pub memory: Vec<u16>,
     pub running: bool,
     pub trace: Vec<TraceRow>,
+    /// Number of instructions in the loaded program. Execution halts once
+    /// `pc` reaches this boundary; data written past it (via STORE) does not
+    /// become executable code.
+    program_len: usize,
 }
 
 impl Cpu {
     pub fn new(program: Vec<u16>) -> Self {
+        let program_len = program.len();
         Cpu {
             registers: Register::new(),
             pc: 0,
@@ -20,11 +25,16 @@ impl Cpu {
             memory: program,
             running: true,
             trace: Vec::new(),
+            program_len,
         }
     }
 
     pub fn fetch(&self) -> Option<u16> {
-        self.memory.get(self.pc as usize).copied()
+        if (self.pc as usize) < self.program_len {
+            self.memory.get(self.pc as usize).copied()
+        } else {
+            None
+        }
     }
 
     pub fn execute(&mut self, instruction: u16) -> bool {
@@ -138,6 +148,49 @@ impl Cpu {
                 }
                 self.pc += 1;
             }
+            InstructionSet::DIV => {
+                // DIV Rd, Rs, Rt: division by zero yields 0
+                let rd = (instruction >> 8) & 0xF;
+                let rs = (instruction >> 4) & 0xF;
+                let rt = instruction & 0xF;
+                if let (Some(rs_val), Some(rt_val)) = (
+                    self.registers.get_reg_from_idx(rs as u16),
+                    self.registers.get_reg_from_idx(rt as u16),
+                ) {
+                    let result = if rt_val == 0 { 0 } else { rs_val / rt_val };
+                    self.registers.set_reg(rd as u16, result);
+                }
+                self.pc += 1;
+            }
+            InstructionSet::NOT => {
+                // NOT Rd, Rs: bitwise complement
+                let rd = (instruction >> 8) & 0xF;
+                let rs = (instruction >> 4) & 0xF;
+                if let Some(rs_val) = self.registers.get_reg_from_idx(rs as u16) {
+                    self.registers.set_reg(rd as u16, !rs_val);
+                }
+                self.pc += 1;
+            }
+            InstructionSet::LOAD => {
+                // LOAD Rd, addr: bits[11:8]=Rd, bits[7:0]=addr
+                let rd = (instruction >> 8) & 0xF;
+                let addr = (instruction & 0xFF) as usize;
+                let val = self.memory.get(addr).copied().unwrap_or(0);
+                self.registers.set_reg(rd as u16, val);
+                self.pc += 1;
+            }
+            InstructionSet::STORE => {
+                // STORE Rs, addr: bits[11:8]=Rs, bits[7:0]=addr
+                let rs = (instruction >> 8) & 0xF;
+                let addr = (instruction & 0xFF) as usize;
+                if let Some(rs_val) = self.registers.get_reg_from_idx(rs as u16) {
+                    if addr >= self.memory.len() {
+                        self.memory.resize(addr + 1, 0);
+                    }
+                    self.memory[addr] = rs_val;
+                }
+                self.pc += 1;
+            }
             InstructionSet::JMP => {
                 // JMP addr: bits[15:12]=1011, bits[11:0]=addr
                 let addr = instruction & 0xFFF;
@@ -175,29 +228,23 @@ impl Cpu {
                     }
                 }
             }
-            _ => {
-                self.pc += 1;
-            }
         }
 
-        // Continue execution if pc is still within program bounds
-        self.pc < self.memory.len() as u32
+        // Continue while the program counter still points at program code.
+        (self.pc as usize) < self.program_len
     }
 
     pub fn run(&mut self) {
+        self.running = true;
         while let Some(instruction) = self.fetch() {
             if !self.execute(instruction) {
                 break;
             }
         }
+        self.running = false;
     }
 
     pub fn get_trace(&self) -> Vec<TraceRow> {
         self.trace.clone()
     }
 }
-
-// CPU enhancements added Jan 2026
-// Optimized fetch-execute cycle
-
-// Memory management and stack operations added Feb 2026
