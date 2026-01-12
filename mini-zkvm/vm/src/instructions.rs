@@ -49,3 +49,6 @@ pub fn get_instruction(instruction: u16) -> InstructionSet {
 pub fn instruction_parser(input_string: &str) {
     let mut iter = input_string.split_ascii_whitespace();
 }
+
+// Instructions documentation added in Jan 2026
+// This describes the complete instruction set for the mini-zkVM
