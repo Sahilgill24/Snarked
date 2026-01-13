@@ -1,48 +1,57 @@
-// This is a register based VM, which will generate a trace table
-// the registers are defined here.
-// they will be used to define the execution's trace.
+// Register-based VM. Runs either a built-in demo or an assembly file
+// passed on the command line, and prints the final register state and
+// execution trace.
+//
+//   ADD r3, r1, r2  ->  0000 0011 0001 0010  (0x3312)
+//   MOV r1, 7       ->  0001 0001 0000 0111  (0x1107)
 
-// ADD r3 r1 r2
-// 0000 | 0011 | 0001 | 0010
+use std::process;
 
-// MOV r1 7
-// 0011 | 0001| 0111 | xxxx {Challenge is there is no fixed bit size and format, and I cant simply pad or can I 0000 -> 0111, 1000 would work and represent no bit}
-
-use vm::{Cpu, get_instruction};
+use vm::{assemble, get_instruction, Cpu};
 
 fn main() {
-    // Example 1: Simple MOV and ADD
-    println!("=== VM Example ===\n");
-    
-    let program = vec![
-        0x1102, // MOV r1, 2      (r1 = 2)
-        0x1203, // MOV r2, 3      (r2 = 3)
-        0x3012, // ADD r0, r1, r2 (r0 = r1 + r2 = 5)
-    ];
+    let args: Vec<String> = std::env::args().collect();
+
+    let program = match args.get(1) {
+        Some(path) => match std::fs::read_to_string(path) {
+            Ok(source) => match assemble(&source) {
+                Ok(program) => program,
+                Err(e) => {
+                    eprintln!("assembly error: {e}");
+                    process::exit(1);
+                }
+            },
+            Err(e) => {
+                eprintln!("could not read `{path}`: {e}");
+                process::exit(1);
+            }
+        },
+        None => {
+            println!("=== VM Demo (no program file given) ===\n");
+            vec![
+                0x1102, // MOV r1, 2
+                0x1203, // MOV r2, 3
+                0x3012, // ADD r0, r1, r2  -> r0 = 5
+            ]
+        }
+    };
 
     let mut cpu = Cpu::new(program);
     cpu.run();
 
     println!("Execution completed!");
     println!("Final register state:");
-    let regs = cpu.registers.get_all_registers();
-    for (i, &val) in regs.iter().enumerate() {
-        println!("  r{}: {}", i, val);
+    for (i, val) in cpu.registers.get_all_registers().iter().enumerate() {
+        println!("  r{i}: {val}");
     }
 
     println!("\nExecution trace:");
     for (i, row) in cpu.get_trace().iter().enumerate() {
         println!(
-            "  Step {}: PC={}, Instruction=0x{:04X}",
-            i, row.pc, row.instruction
+            "  Step {i}: PC={}, Instruction=0x{:04X} ({:?})",
+            row.pc,
+            row.instruction,
+            get_instruction(row.instruction)
         );
     }
-
-    // Test instruction parsing
-    println!("\n=== Instruction Decoding ===");
-    let test_instruction = 0x3012;
-    let opcode = get_instruction(test_instruction);
-    println!("Instruction 0x{:04X}: {:?}", test_instruction, opcode);
 }
-
-// CLI and program loading March 2026
