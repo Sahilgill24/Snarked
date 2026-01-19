@@ -1,0 +1,12 @@
+[package]
+name = "succinct_gkr_protocol"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ark-ff = "0.4"
+ark-serialize = "0.4"
+sha2 = "0.10"
+
+[dev-dependencies]
+ark-bn254 = "0.4"
