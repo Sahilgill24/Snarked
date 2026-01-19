@@ -196,3 +196,6 @@ impl Cpu {
         self.trace.clone()
     }
 }
+
+// CPU enhancements added Jan 2026
+// Optimized fetch-execute cycle
