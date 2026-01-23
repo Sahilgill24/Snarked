@@ -1,0 +1,11 @@
+[package]
+name = "plonk_core"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+ark-ff = "0.4"
+ark-ec = "0.4"
