@@ -199,3 +199,5 @@ impl Cpu {
 
 // CPU enhancements added Jan 2026
 // Optimized fetch-execute cycle
+
+// Memory management and stack operations added Feb 2026
