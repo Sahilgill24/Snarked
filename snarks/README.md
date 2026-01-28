@@ -55,15 +55,28 @@ Simplified implementations of three major ZK-SNARK systems.
 ## Directory Structure
 
 ```
-groth16/          - Groth16 implementation
-plonk/            - PLONK (compiler, core, protocol)
-succinct_gkr/     - GKR with sumcheck protocol
+groth16/                 - Groth16 implementation
+plonk/                   - PLONK (compiler, core, protocol)
+succinct_gkr_protocol/   - GKR with sumcheck protocol
 ```
+
+## Status
+
+Only the GKR crate is fully working right now. `groth16`, `plonk/core`, and
+`plonk/compiler` compile; `plonk/protocol` is still a work in progress. See the
+top-level README for details.
 
 ## Usage
 
-Each system provides `prove()` and `verify()` functions:
-- Groth16: `protocol::Groth16::prove/verify`
-- PLONK: `prover::Prover::prove` + `verifier::Verifier::verify`
-- GKR: `SuccinctGKR::prove/verify`
+GKR is the one you can run today:
+
+```bash
+cd succinct_gkr_protocol
+cargo test
+cargo run --example demo
+```
+
+Its public API is `succinct_gkr_protocol::{prove, verify}` (or the
+`SuccinctGKR` type via the `GKRProverInterface` / `GKRVerifierInterface`
+traits).
 
