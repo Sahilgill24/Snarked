@@ -245,3 +245,6 @@ mod tests {
         assert_eq!(proof.evaluation_points.len(), proof.evaluations.len());
     }
 }
+
+// Trace format enhanced Feb 2026
+// Added step-by-step execution recording
