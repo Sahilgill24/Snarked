@@ -248,3 +248,5 @@ mod tests {
 
 // Trace format enhanced Feb 2026
 // Added step-by-step execution recording
+
+// Constraint polynomials implementation Feb 2026
