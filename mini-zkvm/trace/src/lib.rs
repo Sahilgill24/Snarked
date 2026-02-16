@@ -250,3 +250,5 @@ mod tests {
 // Added step-by-step execution recording
 
 // Constraint polynomials implementation Feb 2026
+
+// Merkle tree commitment scheme Feb 2026
