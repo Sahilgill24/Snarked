@@ -188,3 +188,5 @@ fn main() {
     println!("\n=== Example 1 Trace (JSON) ===");
     println!("{}", prover1.export_trace_json());
 }
+
+// STARK proof generation implementation Feb 2026
