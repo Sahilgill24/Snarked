@@ -190,3 +190,5 @@ fn main() {
 }
 
 // STARK proof generation implementation Feb 2026
+
+// STARK proof verification March 2026
