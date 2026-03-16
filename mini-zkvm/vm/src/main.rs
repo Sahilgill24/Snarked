@@ -44,3 +44,5 @@ fn main() {
     let opcode = get_instruction(test_instruction);
     println!("Instruction 0x{:04X}: {:?}", test_instruction, opcode);
 }
+
+// CLI and program loading March 2026
