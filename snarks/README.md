@@ -13,10 +13,10 @@ Simplified implementations of three major ZK-SNARK systems.
 - Verifier checks single pairing equation
 
 **Tradeoffs:**
-- ✅ Tiny proofs (~200 bytes)
-- ✅ Fast verification
-- ❌ Needs trusted setup per circuit
-- ❌ Not universal
+- Tiny proofs (~200 bytes)
+- Fast verification
+- Needs trusted setup per circuit
+- Not universal
 
 ## PLONK
 
@@ -29,11 +29,11 @@ Simplified implementations of three major ZK-SNARK systems.
 - Verifier checks polynomial identities via pairings
 
 **Tradeoffs:**
-- ✅ Universal trusted setup (one setup for all circuits)
-- ✅ Custom gates possible
-- ✅ Flexible circuit design
-- ❌ Larger proofs than Groth16
-- ❌ More complex prover
+- Universal trusted setup (one setup for all circuits)
+- Custom gates possible
+- Flexible circuit design
+- Larger proofs than Groth16
+- More complex prover
 
 ## Succinct GKR
 
@@ -46,11 +46,11 @@ Simplified implementations of three major ZK-SNARK systems.
 - Final layer verified with polynomial commitment
 
 **Tradeoffs:**
-- ✅ No trusted setup
-- ✅ Transparent
-- ✅ Efficient for structured circuits
-- ❌ Proof size grows with circuit depth
-- ❌ Limited to layered circuits
+- No trusted setup
+- Transparent
+- Efficient for structured circuits
+- Proof size grows with circuit depth
+- Limited to layered circuits
 
 ## Directory Structure
 
@@ -67,6 +67,3 @@ Each system provides `prove()` and `verify()` functions:
 - PLONK: `prover::Prover::prove` + `verifier::Verifier::verify`
 - GKR: `SuccinctGKR::prove/verify`
 
----
-
-**Note:** These are simplified educational implementations. Production systems require additional security hardening.
