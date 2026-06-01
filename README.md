@@ -1,10 +1,9 @@
 ## Snarked
 
-Trying to write snarks on my own to learn about them 
+This is my attempt at trying to write SNARK based systems as well as implementing a miniature zk-vm to learn about STARK's and other protocols in cryptography. 
 
-Simplified implementations of three major zero-knowledge proof systems:
 
-- **Groth16**: Pairing-based zk-SNARK 
-- **PLONK**: zk-SNARK with polynomial commitments
-- **GKR**: IP using the sumcheck protocol
+
+## Directory structure 
+
 
